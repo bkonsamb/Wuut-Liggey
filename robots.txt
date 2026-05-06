@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /data/
+Disallow: /scripts/
+
+Sitemap: https://wuutliggey.sn/sitemap.xml
+
+# Wuut Liggey — Offres d'emploi au Sénégal
