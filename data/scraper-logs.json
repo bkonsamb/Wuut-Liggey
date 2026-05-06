@@ -2,6 +2,13 @@
   {
     "timestamp": "2026-05-06T23:36:08.275Z",
     "site": "senjob",
+    "url": "https://www.emploidakar.com/",
+    "error": "Request failed with status code 404",
+    "type": "scrape_error"
+  },
+  {
+    "timestamp": "2026-05-06T23:36:08.275Z",
+    "site": "senjob",
     "url": "https://www.senjob.com/offres-emploi/",
     "error": "Request failed with status code 404",
     "type": "scrape_error"
