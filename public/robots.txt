@@ -6,4 +6,3 @@ Disallow: /scripts/
 Sitemap: https://wuutliggey.sn/sitemap.xml
 
 # Wuut Liggey — Offres d'emploi au Sénégal
-# Pour toute question: contact@wuutliggey.sn
