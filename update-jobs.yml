@@ -1,0 +1,142 @@
+name: 🔄 Wuut Liggey — Mise à jour automatique des offres
+
+on:
+  schedule:
+    # Exécution tous les jours à 7h00 UTC (8h heure sénégalaise)
+    - cron: '0 7 * * *'
+    # Exécution secondaire à 13h00 UTC pour les mises à jour de l'après-midi
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Forcer la mise à jour même sans nouvelles offres'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'update-jobs'
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    name: Récupérer, enrichir et déployer les offres
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Checkout du dépôt
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: ⚙️ Configurer Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Installer les dépendances
+        run: |
+          npm ci
+          # Installer les dépendances des scripts
+          npm install --save-dev node-fetch axios cheerio puppeteer
+
+      - name: 📁 Créer les répertoires nécessaires
+        run: |
+          mkdir -p data
+          mkdir -p public/data
+          mkdir -p public/jobs
+          # Initialiser les fichiers JSON s'ils n'existent pas
+          [ -f data/rss-logs.json ] || echo '[]' > data/rss-logs.json
+          [ -f data/scraper-logs.json ] || echo '[]' > data/scraper-logs.json
+          [ -f data/scraped-raw.json ] || echo '[]' > data/scraped-raw.json
+
+      - name: 📡 Étape 1 — Récupération des flux RSS
+        run: |
+          echo "🔄 Démarrage fetch-rss.js..."
+          node scripts/fetch-rss.js || echo "⚠️ RSS fetch terminé avec des avertissements"
+        env:
+          NODE_OPTIONS: '--experimental-vm-modules'
+
+      - name: 🕷️ Étape 2 — Scraping des sites d'emploi
+        run: |
+          echo "🔄 Démarrage scraper.js..."
+          node scripts/scraper.js || echo "⚠️ Scraper terminé avec des avertissements"
+        env:
+          NODE_OPTIONS: '--experimental-vm-modules'
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'false'
+
+      - name: 🧠 Étape 3 — Enrichissement IA (Groq)
+        run: |
+          echo "🔄 Démarrage generate-ai.js..."
+          node scripts/generate-ai.js || echo "⚠️ AI generation terminée avec des avertissements"
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          NODE_OPTIONS: '--experimental-vm-modules'
+
+      - name: 📄 Étape 4 — Génération des pages HTML
+        run: |
+          echo "🔄 Démarrage generate-pages.js..."
+          node scripts/generate-pages.js
+        env:
+          NODE_OPTIONS: '--experimental-vm-modules'
+
+      - name: 🏗️ Build du site React
+        run: npm run build
+
+      - name: 📊 Statistiques de la mise à jour
+        run: |
+          echo "=== RÉSUMÉ ==="
+          echo "Offres totales: $(cat public/data/jobs.json | node -e 'const d=require("fs").readFileSync("/dev/stdin","utf-8"); console.log(JSON.parse(d).length)')"
+          echo "Pages HTML générées: $(ls public/jobs/*.html 2>/dev/null | wc -l)"
+          echo "Taille jobs.json: $(wc -c < public/data/jobs.json) bytes"
+
+      - name: 📤 Commit et push des changements
+        run: |
+          git config --local user.email "bot@wuutliggey.sn"
+          git config --local user.name "Wuut Liggey Bot"
+          
+          # Ajouter tous les fichiers modifiés
+          git add public/data/jobs.json
+          git add public/jobs/ || true
+          git add public/sitemap.xml || true
+          git add public/robots.txt || true
+          git add data/ || true
+          git add dist/ || true
+          
+          # Vérifier s'il y a des changements à committer
+          if git diff --staged --quiet; then
+            echo "✅ Aucun changement détecté — Pas de commit nécessaire"
+          else
+            JOBS_COUNT=$(cat public/data/jobs.json | node -e 'const d=require("fs").readFileSync("/dev/stdin","utf-8"); console.log(JSON.parse(d).length)' 2>/dev/null || echo "?")
+            git commit -m "🤖 Mise à jour automatique — ${JOBS_COUNT} offres — $(date '+%d/%m/%Y %H:%M')"
+            git push
+            echo "✅ Changements commités et poussés"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🚀 Déploiement sur GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          commit_message: '🚀 Déploiement — $(date +%Y-%m-%d)'
+          force_orphan: false
+
+      - name: ✅ Résumé final
+        if: always()
+        run: |
+          echo "================================"
+          echo "✅ Pipeline Wuut Liggey terminé"
+          echo "================================"
+          echo "Date: $(date '+%d/%m/%Y à %H:%M UTC')"
+          echo "Status: ${{ job.status }}"
