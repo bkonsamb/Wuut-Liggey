@@ -38,6 +38,21 @@ const USER_AGENTS = [
 // ─── Target sites ─────────────────────────────────────────────────────────────
 const SITES = [
   {
+    name: 'emploi-sn',
+    displayName: 'Emploi Dakar',
+    url: 'https://www.emploidakar.com/offres-demploi-au-senegal/',
+    type: 'cheerio',
+    selectors: {
+      container: '.offer-item',
+      title: '.offer-title',
+      company: '.offer-company',
+      location: '.offer-location',
+      date: '.offer-date',
+      description: '.offer-description',
+      link: 'a'
+    }
+  },
+  {
     name: 'senjob',
     displayName: 'Jobs Sénégal',
     url: 'https://senjob.com/offres-d-emploi.php',
