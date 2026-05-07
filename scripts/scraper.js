@@ -40,7 +40,7 @@ const SITES = [
   {
     name: 'senjob',
     displayName: 'Jobs Sénégal',
-    url: 'https://www.senjob.com/offres-emploi/',
+    url: 'https://senjob.com/offres-d-emploi.php',
     type: 'cheerio',
     selectors: {
       container: '.job-listing',
