@@ -3414,5 +3414,26 @@
     "url": "https://www.rekrute.com/offres-emploi-senegal.html",
     "error": "Request failed with status code 404",
     "type": "scrape_error"
+  },
+  {
+    "timestamp": "2026-07-21T09:22:37.367Z",
+    "site": "emploi-sn",
+    "url": "https://www.emploi.sn/offres",
+    "error": "timeout of 15000ms exceeded",
+    "type": "scrape_error"
+  },
+  {
+    "timestamp": "2026-07-21T09:22:47.211Z",
+    "site": "galsen-ji",
+    "url": "https://galsen-ji.com/emplois/",
+    "error": "getaddrinfo ENOTFOUND galsen-ji.com",
+    "type": "scrape_error"
+  },
+  {
+    "timestamp": "2026-07-21T09:23:04.456Z",
+    "site": "rekrute-sn",
+    "url": "https://www.rekrute.com/offres-emploi-senegal.html",
+    "error": "Request failed with status code 404",
+    "type": "scrape_error"
   }
 ]
