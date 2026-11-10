@@ -1,26 +1,5 @@
 [
   {
-    "timestamp": "2026-06-03T11:50:31.944Z",
-    "site": "emploi-sn",
-    "url": "https://www.emploi.sn/offres",
-    "error": "timeout of 15000ms exceeded",
-    "type": "scrape_error"
-  },
-  {
-    "timestamp": "2026-06-03T11:50:41.202Z",
-    "site": "galsen-ji",
-    "url": "https://galsen-ji.com/emplois/",
-    "error": "getaddrinfo ENOTFOUND galsen-ji.com",
-    "type": "scrape_error"
-  },
-  {
-    "timestamp": "2026-06-03T11:50:52.408Z",
-    "site": "africarh",
-    "url": "https://www.africarh.com/offres-emploi/senegal/",
-    "error": "Request failed with status code 403",
-    "type": "scrape_error"
-  },
-  {
     "timestamp": "2026-06-03T11:51:03.899Z",
     "site": "rekrute-sn",
     "url": "https://www.rekrute.com/offres-emploi-senegal.html",
@@ -6994,6 +6973,27 @@
   },
   {
     "timestamp": "2026-11-10T15:18:07.984Z",
+    "site": "rekrute-sn",
+    "url": "https://www.rekrute.com/offres-emploi-senegal.html",
+    "error": "Request failed with status code 404",
+    "type": "scrape_error"
+  },
+  {
+    "timestamp": "2026-11-10T20:04:54.002Z",
+    "site": "emploi-sn",
+    "url": "https://www.emploi.sn/offres",
+    "error": "timeout of 15000ms exceeded",
+    "type": "scrape_error"
+  },
+  {
+    "timestamp": "2026-11-10T20:05:03.625Z",
+    "site": "galsen-ji",
+    "url": "https://galsen-ji.com/emplois/",
+    "error": "getaddrinfo ENOTFOUND galsen-ji.com",
+    "type": "scrape_error"
+  },
+  {
+    "timestamp": "2026-11-10T20:05:19.240Z",
     "site": "rekrute-sn",
     "url": "https://www.rekrute.com/offres-emploi-senegal.html",
     "error": "Request failed with status code 404",
